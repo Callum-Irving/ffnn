@@ -1,3 +1,5 @@
+mod nn;
+
 #[cfg(test)]
 mod tests {
     #[test]
