@@ -12,7 +12,7 @@ pub struct Network {
 impl Network {
     pub fn new(inputs: usize, hidden: Vec<Layer>, outputs: Layer) -> Self {
         Network {
-            inputs: Layer::new(inputs, None),
+            inputs: Layer::new(inputs, 1, None),
             hidden,
             outputs,
         }

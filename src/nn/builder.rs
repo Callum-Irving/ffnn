@@ -1,15 +1,28 @@
 use super::layer::Layer;
 
 pub struct NetBuilder {
+    num_inputs: usize,
     layers: Vec<Layer>,
 }
 
 impl NetBuilder {
     pub fn new() -> Self {
-        NetBuilder { layers: vec![] }
+        NetBuilder {
+            num_inputs: 0,
+            layers: vec![],
+        }
+    }
+
+    pub fn inputs(&mut self, num_inputs: usize) {
+        self.num_inputs = num_inputs;
     }
 
     pub fn layer(&mut self, nodes: usize, activation: Option<fn(f32) -> f32>) {
-        self.layers.push(Layer::new(nodes, activation));
+        let last_size = if let Some(layer) = self.layers.last() {
+            layer.len()
+        } else {
+            self.num_inputs
+        };
+        self.layers.push(Layer::new(nodes, last_size, activation));
     }
 }
