@@ -1,4 +1,4 @@
-use nalgebra::DMatrix;
+use nalgebra::{DMatrix, DVector};
 
 pub struct Layer {
     weights: DMatrix<f32>,
@@ -16,9 +16,11 @@ impl Layer {
         }
     }
 
-    pub fn eval(&self, inputs: Vec<f32>) -> Vec<f32> {
+    pub fn eval(&self, inputs: DVector<f32>) -> DVector<f32> {
         assert_eq!(self.weights.ncols(), inputs.len());
-        todo!();
+        let mut out = DVector::zeros(inputs.len());
+        self.weights.mul_to(&inputs, &mut out);
+        out
     }
 
     pub fn len(&self) -> usize {

@@ -1,6 +1,6 @@
 use super::layer::Layer;
 
-use nalgebra::DMatrix;
+use nalgebra::{DMatrix, DVector};
 
 /// Basic feedforward neural network
 pub struct Network {
@@ -27,6 +27,7 @@ impl Network {
     pub fn predict(&self, inputs: Vec<f32>) -> Vec<f32> {
         assert_eq!(self.inputs.len(), inputs.len());
 
+        let inputs = DVector::from_vec(inputs);
         let mut last = inputs;
         for layer in self.hidden.iter() {
             last = layer.eval(last);
