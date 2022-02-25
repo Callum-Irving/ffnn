@@ -10,12 +10,17 @@ pub struct Network {
 
 impl Network {
     pub fn new(inputs: usize, layers: Vec<Layer>) -> Self {
-        Network { num_inputs: inputs, layers }
+        Network {
+            num_inputs: inputs,
+            layers,
+        }
     }
 
     /// Perform some sort of initialization.
     pub fn init(&mut self) {
-        todo!();
+        for layer in self.layers.iter_mut() {
+            layer.random_init(-1.0, 1.0);
+        }
     }
 
     /// Do forward propagation.
@@ -36,5 +41,24 @@ impl Network {
         assert_eq!(self.num_inputs, dataset.ncols());
 
         todo!();
+    }
+
+    pub fn print(&self) {
+        for layer in self.layers.iter() {
+            println!("{:?}", layer.weights);
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::super::builder::NetBuilder;
+    #[test]
+    fn create() {
+        let mut net = NetBuilder::new().inputs(3).layer(2, None).outputs(5, None);
+        net.init();
+        net.print();
+
+        println!("{}", net.predict(vec![0.0, 1.0, 2.0]));
     }
 }
