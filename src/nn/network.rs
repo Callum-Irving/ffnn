@@ -4,18 +4,13 @@ use nalgebra::{DMatrix, DVector};
 
 /// Basic feedforward neural network
 pub struct Network {
-    inputs: Layer,
-    hidden: Vec<Layer>,
-    outputs: Layer,
+    num_inputs: usize,
+    layers: Vec<Layer>,
 }
 
 impl Network {
-    pub fn new(inputs: usize, hidden: Vec<Layer>, outputs: Layer) -> Self {
-        Network {
-            inputs: Layer::new(inputs, 1, None),
-            hidden,
-            outputs,
-        }
+    pub fn new(inputs: usize, layers: Vec<Layer>) -> Self {
+        Network { num_inputs: inputs, layers }
     }
 
     /// Perform some sort of initialization.
@@ -24,22 +19,21 @@ impl Network {
     }
 
     /// Do forward propagation.
-    pub fn predict(&self, inputs: Vec<f32>) -> Vec<f32> {
-        assert_eq!(self.inputs.len(), inputs.len());
+    pub fn predict(&self, inputs: Vec<f32>) -> DVector<f32> {
+        assert_eq!(self.num_inputs, inputs.len());
 
         let inputs = DVector::from_vec(inputs);
         let mut last = inputs;
-        for layer in self.hidden.iter() {
+        for layer in self.layers.iter() {
             last = layer.eval(last);
         }
-
-        self.outputs.eval(last)
+        last
     }
 
     /// Do batched gradient descent by backprop.
     pub fn train(&mut self, dataset: DMatrix<f32>) {
         // Number of columns in dataset should match length of inputs
-        assert_eq!(dataset.ncols(), self.inputs.len());
+        assert_eq!(self.num_inputs, dataset.ncols());
 
         todo!();
     }

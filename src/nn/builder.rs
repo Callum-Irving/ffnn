@@ -1,4 +1,5 @@
 use super::layer::Layer;
+use super::Network;
 
 pub struct NetBuilder {
     num_inputs: usize,
@@ -24,5 +25,10 @@ impl NetBuilder {
             self.num_inputs
         };
         self.layers.push(Layer::new(nodes, last_size, activation));
+    }
+
+    pub fn outputs(mut self, nodes: usize, activation: Option<fn(f32) -> f32>) -> Network {
+        self.layer(nodes, activation);
+        Network::new(self.num_inputs, self.layers)
     }
 }
