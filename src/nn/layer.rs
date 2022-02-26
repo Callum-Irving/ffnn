@@ -1,4 +1,4 @@
-use nalgebra::{DMatrix, DVector};
+use nalgebra::{DMatrix, DVector, dvector};
 use rand::prelude::*;
 
 pub struct Layer {
@@ -8,8 +8,9 @@ pub struct Layer {
 
 impl Layer {
     pub fn new(nodes: usize, inputs: usize, activation: Option<fn(f32) -> f32>) -> Self {
-        // Create matrix with <nodes> rows and <inputs> columns
-        let weights = DMatrix::<f32>::zeros(nodes, inputs);
+        // Create matrix with <nodes> rows and <inputs> + 1 columns
+        // The + 1 is for the bias weight
+        let weights = DMatrix::<f32>::zeros(nodes, inputs + 1);
 
         Layer {
             weights,
@@ -24,7 +25,10 @@ impl Layer {
     }
 
     pub fn eval(&self, inputs: DVector<f32>) -> DVector<f32> {
-        assert_eq!(self.weights.ncols(), inputs.len());
+        assert_eq!(self.weights.ncols() - 1, inputs.len());
+
+        // Append 1 to the end of the input vector
+        let inputs = inputs.push(1.0);
 
         let mut out = DVector::zeros(self.weights.nrows());
         self.weights.mul_to(&inputs, &mut out);

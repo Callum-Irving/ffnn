@@ -4,7 +4,7 @@ Not useful yet, still a WIP.
 
 ## TODO
 
-- [ ] Forward propagation
+- [ ] Move initialization to the builder
 - [ ] Backward propagation
 - [ ] Batched backprop
 - [ ] Multiple activation functions
@@ -12,6 +12,9 @@ Not useful yet, still a WIP.
 - [ ] Multiple cost functions
 - [ ] Maybe multiple optimization methods (not just gradient descent)
 - [ ] Thread pool to increase performance
+
+- [x] Forward propagation
+- [x] Add bias nodes
 
 ## References
 

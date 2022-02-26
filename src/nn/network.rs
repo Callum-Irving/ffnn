@@ -59,6 +59,6 @@ mod tests {
         net.init();
         net.print();
 
-        println!("{}", net.predict(vec![0.0, 1.0, 2.0]));
+        println!("{}", net.predict(vec![0.0, 0.0, 0.0]));
     }
 }
