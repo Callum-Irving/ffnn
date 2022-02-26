@@ -8,8 +8,8 @@ pub struct Layer {
 
 impl Layer {
     pub fn new(nodes: usize, inputs: usize, activation: Option<fn(f32) -> f32>) -> Self {
-        // Create matrix with <nodes> columns and <inputs> rows
-        let weights = DMatrix::<f32>::zeros(inputs, nodes);
+        // Create matrix with <nodes> rows and <inputs> columns
+        let weights = DMatrix::<f32>::zeros(nodes, inputs);
 
         Layer {
             weights,
@@ -25,7 +25,8 @@ impl Layer {
 
     pub fn eval(&self, inputs: DVector<f32>) -> DVector<f32> {
         assert_eq!(self.weights.ncols(), inputs.len());
-        let mut out = DVector::zeros(inputs.len());
+
+        let mut out = DVector::zeros(self.weights.nrows());
         self.weights.mul_to(&inputs, &mut out);
 
         if let Some(activation) = self.activation {
@@ -36,6 +37,6 @@ impl Layer {
     }
 
     pub fn len(&self) -> usize {
-        self.weights.ncols()
+        self.weights.nrows()
     }
 }

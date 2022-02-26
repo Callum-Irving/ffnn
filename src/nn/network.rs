@@ -45,7 +45,7 @@ impl Network {
 
     pub fn print(&self) {
         for layer in self.layers.iter() {
-            println!("{:?}", layer.weights);
+            println!("{}", layer.weights);
         }
     }
 }
