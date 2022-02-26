@@ -52,13 +52,17 @@ impl Network {
 
 #[cfg(test)]
 mod tests {
+    use super::super::activations::RELU;
     use super::super::builder::NetBuilder;
+
     #[test]
     fn create() {
-        let clamp = |val| if val < 0.5 { 0.0 } else { 1.0 };
-        let net = NetBuilder::new().inputs(3).layer(2, None).layer(5, Some(clamp)).init();
-        net.print();
+        let net = NetBuilder::new()
+            .inputs(3)
+            .layer(2, None)
+            .layer(5, Some(RELU))
+            .init();
 
-        println!("{}", net.predict(vec![0.0, 0.0, 0.0]));
+        net.predict(vec![0.0, 0.0, 0.0]);
     }
 }

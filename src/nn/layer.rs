@@ -1,13 +1,15 @@
-use nalgebra::{DMatrix, DVector, dvector};
+use nalgebra::{DMatrix, DVector};
 use rand::prelude::*;
+
+use super::activations::Activation;
 
 pub struct Layer {
     pub weights: DMatrix<f32>,
-    activation: Option<fn(f32) -> f32>,
+    activation: Option<Activation>,
 }
 
 impl Layer {
-    pub fn new(nodes: usize, inputs: usize, activation: Option<fn(f32) -> f32>) -> Self {
+    pub fn new(nodes: usize, inputs: usize, activation: Option<Activation>) -> Self {
         // Create matrix with <nodes> rows and <inputs> + 1 columns
         // The + 1 is for the bias weight
         let weights = DMatrix::<f32>::zeros(nodes, inputs + 1);
@@ -33,8 +35,8 @@ impl Layer {
         let mut out = DVector::zeros(self.weights.nrows());
         self.weights.mul_to(&inputs, &mut out);
 
-        if let Some(activation) = self.activation {
-            out.map(|result| activation(result))
+        if let Some(activation) = &self.activation {
+            out.map(|result| (activation.apply)(result))
         } else {
             out
         }
