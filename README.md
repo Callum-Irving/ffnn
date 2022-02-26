@@ -4,7 +4,6 @@ Not useful yet, still a WIP.
 
 ## TODO
 
-- [ ] Move initialization to the builder
 - [ ] Backward propagation
 - [ ] Batched backprop
 - [ ] Multiple activation functions
@@ -15,6 +14,7 @@ Not useful yet, still a WIP.
 
 - [x] Forward propagation
 - [x] Add bias nodes
+- [x] Move initialization to the builder
 
 ## References
 

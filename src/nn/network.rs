@@ -55,8 +55,8 @@ mod tests {
     use super::super::builder::NetBuilder;
     #[test]
     fn create() {
-        let mut net = NetBuilder::new().inputs(3).layer(2, None).outputs(5, None);
-        net.init();
+        let clamp = |val| if val < 0.5 { 0.0 } else { 1.0 };
+        let net = NetBuilder::new().inputs(3).layer(2, None).layer(5, Some(clamp)).init();
         net.print();
 
         println!("{}", net.predict(vec![0.0, 0.0, 0.0]));

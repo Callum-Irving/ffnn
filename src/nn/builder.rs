@@ -29,8 +29,9 @@ impl NetBuilder {
         self
     }
 
-    pub fn outputs(mut self, nodes: usize, activation: Option<fn(f32) -> f32>) -> Network {
-        let new = self.layer(nodes, activation);
-        Network::new(new.num_inputs, new.layers)
+    pub fn init(mut self) -> Network {
+        let mut net = Network::new(self.num_inputs, self.layers);
+        net.init();
+        net
     }
 }
