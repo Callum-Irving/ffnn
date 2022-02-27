@@ -1,10 +1,12 @@
+use super::Float;
+
 use nalgebra::DVector;
 
 // TODO: Make some sort of macro for defining activation functions
 
 pub struct Activation {
-    pub apply: fn(DVector<f32>) -> DVector<f32>,
-    pub derive: fn(DVector<f32>) -> DVector<f32>,
+    pub apply: fn(DVector<Float>) -> DVector<Float>,
+    pub derive: fn(DVector<Float>) -> DVector<Float>,
 }
 
 pub const SIGMOID: Activation = Activation {
@@ -17,20 +19,20 @@ pub const RELU: Activation = Activation {
     derive: |z| z.map(|x| d_relu(x)),
 };
 
-fn sigmoid(x: f32) -> f32 {
+fn sigmoid(x: Float) -> Float {
     use std::f32::consts::E;
     1.0 / (1.0 + E.powf(-x))
 }
 
-fn d_sigmoid(x: f32) -> f32 {
+fn d_sigmoid(x: Float) -> Float {
     sigmoid(x) * (1.0 - sigmoid(x))
 }
 
-fn relu(x: f32) -> f32 {
+fn relu(x: Float) -> Float {
     0_f32.max(x)
 }
 
-fn d_relu(x: f32) -> f32 {
+fn d_relu(x: Float) -> Float {
     if x <= 0.0 {
         0.0
     } else {
@@ -42,7 +44,7 @@ fn d_relu(x: f32) -> f32 {
 mod tests {
     use super::*;
 
-    const EPSILON: f32 = 0.000001;
+    const EPSILON: Float = 0.000001;
 
     #[test]
     fn test_sigmoid() {

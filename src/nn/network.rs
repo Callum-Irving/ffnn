@@ -1,4 +1,5 @@
 use super::layer::Layer;
+use super::Float;
 
 use nalgebra::{DMatrix, DVector};
 
@@ -24,7 +25,7 @@ impl Network {
     }
 
     /// Do forward propagation.
-    pub fn predict(&self, inputs: Vec<f32>) -> DVector<f32> {
+    pub fn predict(&self, inputs: Vec<Float>) -> DVector<Float> {
         assert_eq!(self.num_inputs, inputs.len());
 
         let inputs = DVector::from_vec(inputs);
@@ -36,7 +37,7 @@ impl Network {
     }
 
     /// Do batched gradient descent by backprop.
-    pub fn train(&mut self, dataset: DMatrix<f32>) {
+    pub fn train(&mut self, dataset: DMatrix<Float>) {
         // Number of columns in dataset should match length of inputs
         assert_eq!(self.num_inputs, dataset.ncols());
 

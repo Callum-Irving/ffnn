@@ -1,9 +1,11 @@
 pub mod activations;
+mod builder;
 mod layer;
 mod network;
-mod builder;
 
 pub use self::network::Network;
+
+type Float = f32;
 
 // TODO: Make Layer and Network generics
 

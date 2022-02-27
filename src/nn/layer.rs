@@ -1,10 +1,11 @@
+use super::activations::Activation;
+use super::Float;
+
 use nalgebra::{DMatrix, DVector};
 use rand::prelude::*;
 
-use super::activations::Activation;
-
 pub struct Layer {
-    pub weights: DMatrix<f32>,
+    pub weights: DMatrix<Float>,
     activation: Option<Activation>,
 }
 
@@ -12,7 +13,7 @@ impl Layer {
     pub fn new(nodes: usize, inputs: usize, activation: Option<Activation>) -> Self {
         // Create matrix with <nodes> rows and <inputs> + 1 columns
         // The + 1 is for the bias weight
-        let weights = DMatrix::<f32>::zeros(nodes, inputs + 1);
+        let weights = DMatrix::<Float>::zeros(nodes, inputs + 1);
 
         Layer {
             weights,
@@ -20,13 +21,13 @@ impl Layer {
         }
     }
 
-    pub fn random_init(&mut self, min: f32, max: f32) {
+    pub fn random_init(&mut self, min: Float, max: Float) {
         for weight in self.weights.iter_mut() {
             *weight = thread_rng().gen_range(min..max);
         }
     }
 
-    pub fn eval(&self, inputs: DVector<f32>) -> DVector<f32> {
+    pub fn eval(&self, inputs: DVector<Float>) -> DVector<Float> {
         assert_eq!(self.weights.ncols() - 1, inputs.len());
 
         // Append 1 to the end of the input vector
