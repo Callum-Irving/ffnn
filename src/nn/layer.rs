@@ -36,7 +36,7 @@ impl Layer {
         self.weights.mul_to(&inputs, &mut out);
 
         if let Some(activation) = &self.activation {
-            out.map(|result| (activation.apply)(result))
+            (activation.apply)(out)
         } else {
             out
         }

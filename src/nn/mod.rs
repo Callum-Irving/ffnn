@@ -1,11 +1,9 @@
-mod activations;
+pub mod activations;
 mod layer;
 mod network;
 mod builder;
 
 pub use self::network::Network;
-
-pub use self::activations::*;
 
 // TODO: Make Layer and Network generics
 

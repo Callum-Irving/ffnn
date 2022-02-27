@@ -1,13 +1,20 @@
+use nalgebra::DVector;
+
 // TODO: Make some sort of macro for defining activation functions
 
 pub struct Activation {
-    pub apply: fn(f32) -> f32,
-    pub derive: fn(f32) -> f32,
+    pub apply: fn(DVector<f32>) -> DVector<f32>,
+    pub derive: fn(DVector<f32>) -> DVector<f32>,
 }
 
 pub const SIGMOID: Activation = Activation {
-    apply: sigmoid,
-    derive: d_sigmoid,
+    apply: |z| z.map(|x| sigmoid(x)),
+    derive: |z| z.map(|x| d_sigmoid(x)),
+};
+
+pub const RELU: Activation = Activation {
+    apply: |z| z.map(|x| relu(x)),
+    derive: |z| z.map(|x| d_relu(x)),
 };
 
 fn sigmoid(x: f32) -> f32 {
@@ -18,11 +25,6 @@ fn sigmoid(x: f32) -> f32 {
 fn d_sigmoid(x: f32) -> f32 {
     sigmoid(x) * (1.0 - sigmoid(x))
 }
-
-pub const RELU: Activation = Activation {
-    apply: relu,
-    derive: d_relu,
-};
 
 fn relu(x: f32) -> f32 {
     0_f32.max(x)
@@ -44,23 +46,23 @@ mod tests {
 
     #[test]
     fn test_sigmoid() {
-        assert!(((SIGMOID.apply)(0.0) - 0.5).abs() < EPSILON);
-        assert!(((SIGMOID.apply)(2.0) - 0.880797).abs() < EPSILON);
-        assert!(((SIGMOID.apply)(-2.0) - 0.119202).abs() < EPSILON);
+        assert!((sigmoid(0.0) - 0.5).abs() < EPSILON);
+        assert!((sigmoid(2.0) - 0.880797).abs() < EPSILON);
+        assert!((sigmoid(-2.0) - 0.119202).abs() < EPSILON);
 
-        assert!(((SIGMOID.derive)(0.0) - 0.25).abs() < EPSILON);
-        assert!(((SIGMOID.derive)(2.0) - 0.104993).abs() < EPSILON);
-        assert!(((SIGMOID.derive)(-2.0) - 0.104993).abs() < EPSILON);
+        assert!((d_sigmoid(0.0) - 0.25).abs() < EPSILON);
+        assert!((d_sigmoid(2.0) - 0.104993).abs() < EPSILON);
+        assert!((d_sigmoid(-2.0) - 0.104993).abs() < EPSILON);
     }
 
     #[test]
     fn test_relu() {
-        assert!(((RELU.apply)(2.0) - 2.0).abs() < EPSILON);
-        assert!(((RELU.apply)(0.0)).abs() < EPSILON);
-        assert!(((RELU.apply)(-2.0)).abs() < EPSILON);
+        assert!((relu(2.0) - 2.0).abs() < EPSILON);
+        assert!((relu(0.0)).abs() < EPSILON);
+        assert!((relu(-2.0)).abs() < EPSILON);
 
-        assert!(((RELU.derive)(2.0) - 1.0).abs() < EPSILON);
-        assert!(((RELU.derive)(0.0)).abs() < EPSILON);
-        assert!(((RELU.derive)(-1.0)).abs() < EPSILON);
+        assert!((d_relu(2.0) - 1.0).abs() < EPSILON);
+        assert!((d_relu(0.0)).abs() < EPSILON);
+        assert!((d_relu(-1.0)).abs() < EPSILON);
     }
 }
