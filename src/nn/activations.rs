@@ -45,8 +45,7 @@ pub const SOFTMAX: Activation = Activation {
 };
 
 fn sigmoid(x: Float) -> Float {
-    use std::f32::consts::E;
-    1.0 / (1.0 + E.powf(-x))
+    1.0 / (1.0 + (-x).exp())
 }
 
 fn d_sigmoid(x: Float) -> Float {
