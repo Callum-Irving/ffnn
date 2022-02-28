@@ -3,6 +3,8 @@ use super::Float;
 
 use nalgebra::{DMatrix, DVector};
 use rand::prelude::*;
+use rand_distr::Normal;
+use std::f32::consts::SQRT_2;
 
 pub struct Layer {
     pub weights: DMatrix<Float>,
@@ -10,6 +12,7 @@ pub struct Layer {
 }
 
 impl Layer {
+    /// Create a new layer with all weights set to zero.
     pub fn new(nodes: usize, inputs: usize, activation: Option<Activation>) -> Self {
         // Create matrix with <nodes> rows and <inputs> + 1 columns
         // The + 1 is for the bias weight
@@ -21,12 +24,14 @@ impl Layer {
         }
     }
 
-    pub fn random_init(&mut self, min: Float, max: Float) {
-        for weight in self.weights.iter_mut() {
-            *weight = thread_rng().gen_range(min..max);
-        }
+    /// Initialize weights using He Weight Initialization.
+    pub fn random_init(&mut self) {
+        let mut rng = thread_rng();
+        let norm = Normal::new(0.0, SQRT_2 / (self.weights.nrows() as f32).sqrt()).unwrap();
+        self.weights = self.weights.map(|_| rng.sample(norm));
     }
 
+    /// Compute outputs for a vector of inputs.
     pub fn eval(&self, inputs: DVector<Float>) -> DVector<Float> {
         assert_eq!(self.weights.ncols() - 1, inputs.len());
 
@@ -43,6 +48,7 @@ impl Layer {
         }
     }
 
+    /// The number of nodes in the layer.
     pub fn len(&self) -> usize {
         self.weights.nrows()
     }

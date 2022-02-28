@@ -23,7 +23,7 @@ impl Network {
     /// Perform some sort of initialization.
     pub fn init(&mut self) {
         for layer in self.layers.iter_mut() {
-            layer.random_init(-1.0, 1.0);
+            layer.random_init();
         }
     }
 
