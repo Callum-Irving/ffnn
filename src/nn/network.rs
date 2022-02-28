@@ -10,6 +10,7 @@ pub struct Network {
 }
 
 impl Network {
+    /// Create a new network from number of inputs and layers.
     pub fn new(inputs: usize, layers: Vec<Layer>) -> Self {
         Network {
             num_inputs: inputs,
@@ -44,6 +45,7 @@ impl Network {
         todo!();
     }
 
+    /// Print a summary of all the weights in the neural network.
     pub fn print(&self) {
         for layer in self.layers.iter() {
             println!("{}", layer.weights);
@@ -58,8 +60,7 @@ mod tests {
 
     #[test]
     fn create() {
-        let net = NetBuilder::new()
-            .inputs(3)
+        let net = NetBuilder::new(3)
             .layer(2, None)
             .layer(5, Some(RELU))
             .init();

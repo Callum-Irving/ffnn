@@ -1,22 +1,47 @@
+//! Activation functions.
+//!
+//! Predefined functions are Sigmoid, ReLU, and Softmax. Users can create their own activation
+//! functions using the `Activation` struct.
+
 use super::Float;
 
 use nalgebra::DVector;
 
 // TODO: Make some sort of macro for defining activation functions
 
+/// A struct that represents an activation function.
+///
+/// Contains a function for forward pass and backward pass.
 pub struct Activation {
+    /// The function used for forward propagation.
     pub apply: fn(DVector<Float>) -> DVector<Float>,
+
+    /// The function used for backpropagation
     pub derive: fn(DVector<Float>) -> DVector<Float>,
 }
 
+/// The logistic function.
+///
+/// TODO: describe function
 pub const SIGMOID: Activation = Activation {
-    apply: |z| z.map(|x| sigmoid(x)),
-    derive: |z| z.map(|x| d_sigmoid(x)),
+    apply: |z| z.map(sigmoid),
+    derive: |z| z.map(d_sigmoid),
 };
 
+/// The ReLU activation function.
+///
+/// TODO: Describe relu
 pub const RELU: Activation = Activation {
-    apply: |z| z.map(|x| relu(x)),
-    derive: |z| z.map(|x| d_relu(x)),
+    apply: |z| z.map(relu),
+    derive: |z| z.map(d_relu),
+};
+
+/// The Softmax activation function.
+///
+/// TODO: Add description of softmax.
+pub const SOFTMAX: Activation = Activation {
+    apply: |_| todo!(),
+    derive: |_| todo!(),
 };
 
 fn sigmoid(x: Float) -> Float {

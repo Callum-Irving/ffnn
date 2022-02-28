@@ -3,6 +3,7 @@ mod builder;
 mod layer;
 mod network;
 
+pub use self::builder::NetBuilder;
 pub use self::network::Network;
 
 type Float = f32;

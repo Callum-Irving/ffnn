@@ -4,6 +4,8 @@ Not useful yet, still a WIP.
 
 ## TODO
 
+- [ ] Add documentation
+
 - [ ] Backward propagation
 - [ ] Batched backprop
 - [ ] Adam optimizer
