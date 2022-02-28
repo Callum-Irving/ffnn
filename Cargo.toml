@@ -7,6 +7,7 @@ repository = "https://github.com/Callum-Irving/ffnn"
 keywords = ["machine-learning", "neural-network", "feedforward"]
 categories = ["science"]
 description = "A very simple feedfoward neural network library"
+include = ["src/", "Cargo.toml", "LICENSE", "README.md"]
 
 [dependencies]
 nalgebra = "0.30.1"
