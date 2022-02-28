@@ -3,7 +3,9 @@ use super::Float;
 
 use nalgebra::{DMatrix, DVector};
 
-/// Basic feedforward neural network
+/// Basic feedforward neural network.
+///
+/// It is generally constructed using a [`NetBuilder`](crate::NetBuilder).
 pub struct Network {
     num_inputs: usize,
     layers: Vec<Layer>,

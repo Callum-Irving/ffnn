@@ -1,7 +1,7 @@
 //! Activation functions.
 //!
 //! Predefined functions are Sigmoid, ReLU, and Softmax. Users can create their own activation
-//! functions using the `Activation` struct.
+//! functions using the [`Activation`] struct.
 
 use super::Float;
 
@@ -16,7 +16,7 @@ pub struct Activation {
     /// The function used for forward propagation.
     pub apply: fn(DVector<Float>) -> DVector<Float>,
 
-    /// The function used for backpropagation
+    /// The function used for backpropagation.
     pub derive: fn(DVector<Float>) -> DVector<Float>,
 }
 
