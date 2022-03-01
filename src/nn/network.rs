@@ -47,22 +47,22 @@ impl Network {
     }
 
     /// Stochastic gradient descent.
-    pub fn sgd(&mut self, inputs: DVector<Float>, targets: DVector<Float>) {
-        use super::losses::MSE;
+    pub fn sgd(&mut self, _inputs: DVector<Float>, _targets: DVector<Float>) {
+        // use super::losses::MSE;
 
-        // TODO: Save all intermediate activations
-        let mut outputs = self.predict(inputs);
+        // // TODO: Save all intermediate activations
+        // let mut outputs = self.predict(inputs);
 
-        let output_errors = MSE.compute_loss(&outputs, &targets);
-        for layer in self.layers.iter_mut().rev() {
-            let grads = layer.activation.as_ref().unwrap().derive(&outputs);
-            let s2 = grads * output_errors;
-            // let s3 = grads * "transpose of last layer activations";
-            let fin = s2 * 0.3; // Learning rate
-            // add fin to layer.weights
-            layer.weights += fin;
-            outputs = dvector![];
-        }
+        // let output_errors = MSE.compute_loss(&outputs, &targets);
+        // for layer in self.layers.iter_mut().rev() {
+        //     let grads = layer.activation.as_ref().unwrap().derive(&outputs);
+        //     let s2 = grads * output_errors;
+        //     // let s3 = grads * "transpose of last layer activations";
+        //     let fin = s2 * 0.3; // Learning rate
+        //     // add fin to layer.weights
+        //     layer.weights += fin;
+        //     // outputs = dvector![];
+        // }
     }
 
     /// Print a summary of all the weights in the neural network.

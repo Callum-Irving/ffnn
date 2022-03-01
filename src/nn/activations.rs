@@ -14,10 +14,22 @@ use nalgebra::DVector;
 /// Contains a function for forward pass and backward pass.
 pub struct Activation {
     /// The function used for forward propagation.
-    pub apply: fn(DVector<Float>) -> DVector<Float>,
+    apply: fn(DVector<Float>) -> DVector<Float>,
 
     /// The function used for backpropagation.
-    pub derive: fn(DVector<Float>) -> DVector<Float>,
+    derive: fn(DVector<Float>) -> DVector<Float>,
+}
+
+impl Activation {
+    /// Apply activation function for forward propagation.
+    pub fn apply(&self, inputs: DVector<Float>) -> DVector<Float> {
+        (self.apply)(inputs)
+    }
+
+    /// Get gradients for set of inputs.
+    pub fn derive(&self, inputs: DVector<Float>) -> DVector<Float> {
+        (self.derive)(inputs)
+    }
 }
 
 /// The logistic function.
