@@ -1,4 +1,7 @@
 pub mod activations;
+pub mod losses;
+pub mod optimizers;
+
 mod builder;
 mod layer;
 mod network;

@@ -5,5 +5,6 @@
 mod nn;
 
 pub use nn::activations;
+pub use nn::losses;
 pub use nn::NetBuilder;
 pub use nn::Network;

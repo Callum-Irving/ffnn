@@ -28,10 +28,9 @@ impl Network {
     }
 
     /// Do forward propagation.
-    pub fn predict(&self, inputs: Vec<Float>) -> DVector<Float> {
+    pub fn predict(&self, inputs: DVector<Float>) -> DVector<Float> {
         assert_eq!(self.num_inputs, inputs.len());
 
-        let inputs = DVector::from_vec(inputs);
         let mut last = inputs;
         for layer in self.layers.iter() {
             last = layer.eval(last);
@@ -47,6 +46,25 @@ impl Network {
         todo!();
     }
 
+    /// Stochastic gradient descent.
+    pub fn sgd(&mut self, inputs: DVector<Float>, targets: DVector<Float>) {
+        use super::losses::MSE;
+
+        // TODO: Save all intermediate activations
+        let mut outputs = self.predict(inputs);
+
+        let output_errors = MSE.compute_loss(&outputs, &targets);
+        for layer in self.layers.iter_mut().rev() {
+            let grads = layer.activation.as_ref().unwrap().derive(&outputs);
+            let s2 = grads * output_errors;
+            // let s3 = grads * "transpose of last layer activations";
+            let fin = s2 * 0.3; // Learning rate
+            // add fin to layer.weights
+            layer.weights += fin;
+            outputs = dvector![];
+        }
+    }
+
     /// Print a summary of all the weights in the neural network.
     pub fn print(&self) {
         for layer in self.layers.iter() {
@@ -57,6 +75,8 @@ impl Network {
 
 #[cfg(test)]
 mod tests {
+    use nalgebra::dvector;
+
     use super::super::activations::RELU;
     use super::super::builder::NetBuilder;
 
@@ -67,6 +87,6 @@ mod tests {
             .layer(5, Some(RELU))
             .init();
 
-        net.predict(vec![0.0, 0.0, 0.0]);
+        net.predict(dvector![0.0, 0.0, 0.0]);
     }
 }
