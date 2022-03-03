@@ -32,7 +32,7 @@ impl Layer {
     }
 
     /// Compute outputs for a vector of inputs.
-    pub fn eval(&self, inputs: DVector<Float>) -> DVector<Float> {
+    pub fn eval(&self, inputs: &DVector<Float>) -> DVector<Float> {
         assert_eq!(self.weights.ncols() - 1, inputs.len());
 
         // Append 1 to the end of the input vector

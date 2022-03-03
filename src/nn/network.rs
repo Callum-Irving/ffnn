@@ -33,7 +33,7 @@ impl Network {
 
         let mut last = inputs;
         for layer in self.layers.iter() {
-            last = layer.eval(last);
+            last = layer.eval(&last);
         }
         last
     }
@@ -47,8 +47,14 @@ impl Network {
     }
 
     /// Stochastic gradient descent.
-    pub fn sgd(&mut self, _inputs: DVector<Float>, _targets: DVector<Float>) {
+    pub fn sgd(&mut self, inputs: DVector<Float>, _targets: DVector<Float>) {
         // use super::losses::MSE;
+
+        // Do forward prop and save activations
+        let mut activations: Vec<DVector<Float>> = vec![inputs];
+        for layer in self.layers.iter() {
+            activations.push(layer.eval(activations.last().unwrap()));
+        }
 
         // // TODO: Save all intermediate activations
         // let mut outputs = self.predict(inputs);
