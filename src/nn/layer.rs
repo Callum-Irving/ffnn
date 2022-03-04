@@ -8,7 +8,7 @@ use std::f32::consts::SQRT_2;
 
 pub struct Layer {
     pub weights: DMatrix<Float>,
-    activation: Option<Activation>,
+    pub activation: Option<Activation>,
 }
 
 impl Layer {

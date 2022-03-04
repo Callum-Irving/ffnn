@@ -47,8 +47,8 @@ impl Network {
     }
 
     /// Stochastic gradient descent.
-    pub fn sgd(&mut self, inputs: DVector<Float>, _targets: DVector<Float>) {
-        // use super::losses::MSE;
+    pub fn sgd(&mut self, inputs: DVector<Float>, targets: DVector<Float>) {
+        use super::losses::MSE;
 
         // Do forward prop and save activations
         let mut activations: Vec<DVector<Float>> = vec![inputs];
@@ -56,10 +56,11 @@ impl Network {
             activations.push(layer.eval(activations.last().unwrap()));
         }
 
-        // // TODO: Save all intermediate activations
-        // let mut outputs = self.predict(inputs);
+        let output_errors = MSE.compute_loss(&activations.last().unwrap(), &targets);
 
-        // let output_errors = MSE.compute_loss(&outputs, &targets);
+        for (i, layer) in self.layers.iter_mut().rev().enumerate() {
+            let grads = layer.activation.as_ref().unwrap().derive(&activations[i]);
+        }
         // for layer in self.layers.iter_mut().rev() {
         //     let grads = layer.activation.as_ref().unwrap().derive(&outputs);
         //     let s2 = grads * output_errors;

@@ -17,7 +17,7 @@ pub struct Activation {
     apply: fn(DVector<Float>) -> DVector<Float>,
 
     /// The function used for backpropagation.
-    derive: fn(DVector<Float>) -> DVector<Float>,
+    derive: fn(&DVector<Float>) -> DVector<Float>,
 }
 
 impl Activation {
@@ -27,7 +27,7 @@ impl Activation {
     }
 
     /// Get gradients for set of inputs.
-    pub fn derive(&self, inputs: DVector<Float>) -> DVector<Float> {
+    pub fn derive(&self, inputs: &DVector<Float>) -> DVector<Float> {
         (self.derive)(inputs)
     }
 }
