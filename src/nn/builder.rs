@@ -20,7 +20,7 @@ impl NetBuilder {
     }
 
     /// Add a new layer to the network.
-    pub fn layer(mut self, nodes: usize, activation: Option<Activation>) -> Self {
+    pub fn layer(mut self, nodes: usize, activation: Activation) -> Self {
         let last_size = if let Some(layer) = self.layers.last() {
             layer.len()
         } else {

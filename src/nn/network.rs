@@ -47,28 +47,33 @@ impl Network {
     }
 
     /// Stochastic gradient descent.
-    pub fn sgd(&mut self, inputs: DVector<Float>, targets: DVector<Float>, lr: Float) {
+    pub fn sgd(&mut self, inputs: DVector<Float>, targets: DVector<Float>, _lr: Float) {
         use super::losses::MSE;
 
         // Do forward prop and save activations
-        let mut activations: Vec<DVector<Float>> = vec![inputs];
-        for layer in self.layers.iter() {
-            activations.push(layer.eval(activations.last().unwrap()));
+        let mut activations: Vec<DVector<Float>> = vec![inputs.clone()];
+        for (i, layer) in self.layers.iter().enumerate() {
+            activations.push(layer.eval(&activations[i]));
         }
 
-        let _output_err = MSE.compute_loss(activations.last().unwrap(), &targets);
-        let mut grads_last = self.layers[self.layers.len() - 1]
-            .activation
-            .as_ref()
-            .unwrap()
-            .derive(activations.last().unwrap());
+        let err = MSE.compute_loss(activations.last().unwrap(), &targets);
 
-        for (i, layer) in self.layers.iter_mut().rev().skip(1).enumerate() {
-            let grads = layer.activation.as_ref().unwrap().derive(&activations[i]);
-            let s2 = grads.clone() * grads_last * lr;
-            layer.weights += s2;
-            grads_last = grads;
-        }
+        println!("inputs: {}", inputs);
+        println!("outputs: {}", activations.last().unwrap());
+        println!("targets: {}", targets);
+        println!("mse: {}", err);
+
+        panic!()
+        // let mut grads_last = self.layers[self.layers.len() - 1]
+        //     .activation
+        //     .derive(activations.last().unwrap());
+
+        // for (i, layer) in self.layers.iter_mut().rev().skip(1).enumerate() {
+        //     let grads = layer.activation.derive(&activations[i]);
+        //     let s2 = grads.clone() * grads_last * lr;
+        //     layer.weights += s2;
+        //     grads_last = grads;
+        // }
 
         // for (i, layer) in self.layers.iter_mut().rev().enumerate() {
         //     let grads = layer.activation.as_ref().unwrap().derive(&activations[i]);
@@ -102,16 +107,25 @@ impl Network {
 mod tests {
     use nalgebra::dvector;
 
+    use crate::activations::SIGMOID;
+
     use super::super::activations::RELU;
     use super::super::builder::NetBuilder;
 
     #[test]
     fn create() {
-        let net = NetBuilder::new(3)
-            .layer(2, None)
-            .layer(5, Some(RELU))
-            .init();
+        let net = NetBuilder::new(3).layer(2, RELU).layer(5, RELU).init();
 
         net.predict(dvector![0.0, 0.0, 0.0]);
+    }
+
+    #[test]
+    fn train() {
+        let mut net = NetBuilder::new(3).layer(2, RELU).layer(5, SIGMOID).init();
+        net.sgd(
+            dvector![10.0, 50.0, -20.0],
+            dvector![1.2, 1.1, 1.4, 5.3, 8.6],
+            0.1,
+        );
     }
 }

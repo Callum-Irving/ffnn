@@ -65,7 +65,8 @@ fn d_sigmoid(x: Float) -> Float {
 }
 
 fn relu(x: Float) -> Float {
-    0_f32.max(x)
+    let zero: Float = 0.0;
+    zero.max(x)
 }
 
 fn d_relu(x: Float) -> Float {

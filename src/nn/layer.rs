@@ -8,12 +8,12 @@ use std::f32::consts::SQRT_2;
 
 pub struct Layer {
     pub weights: DMatrix<Float>,
-    pub activation: Option<Activation>,
+    pub activation: Activation,
 }
 
 impl Layer {
     /// Create a new layer with all weights set to zero.
-    pub fn new(nodes: usize, inputs: usize, activation: Option<Activation>) -> Self {
+    pub fn new(nodes: usize, inputs: usize, activation: Activation) -> Self {
         // Create matrix with <nodes> rows and <inputs> + 1 columns
         // The + 1 is for the bias weight
         let weights = DMatrix::<Float>::zeros(nodes, inputs + 1);
@@ -27,7 +27,7 @@ impl Layer {
     /// Initialize weights using He Weight Initialization.
     pub fn random_init(&mut self) {
         let mut rng = thread_rng();
-        let norm = Normal::new(0.0, SQRT_2 / (self.weights.nrows() as f32).sqrt()).unwrap();
+        let norm = Normal::new(0.0, SQRT_2 / (self.weights.nrows() as Float).sqrt()).unwrap();
         self.weights = self.weights.map(|_| rng.sample(norm));
     }
 
@@ -41,11 +41,7 @@ impl Layer {
         let mut out = DVector::zeros(self.weights.nrows());
         self.weights.mul_to(&inputs, &mut out);
 
-        if let Some(activation) = &self.activation {
-            activation.apply(out)
-        } else {
-            out
-        }
+        self.activation.apply(out)
     }
 
     /// The number of nodes in the layer.
