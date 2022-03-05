@@ -56,12 +56,12 @@ impl Network {
             activations.push(layer.eval(activations.last().unwrap()));
         }
 
-        let _output_err = MSE.compute_loss(&activations.last().unwrap(), &targets);
+        let _output_err = MSE.compute_loss(activations.last().unwrap(), &targets);
         let mut grads_last = self.layers[self.layers.len() - 1]
             .activation
             .as_ref()
             .unwrap()
-            .derive(&activations.last().unwrap());
+            .derive(activations.last().unwrap());
 
         for (i, layer) in self.layers.iter_mut().rev().skip(1).enumerate() {
             let grads = layer.activation.as_ref().unwrap().derive(&activations[i]);
