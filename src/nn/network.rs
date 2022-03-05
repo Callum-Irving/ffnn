@@ -47,7 +47,7 @@ impl Network {
     }
 
     /// Stochastic gradient descent.
-    pub fn sgd(&mut self, inputs: DVector<Float>, targets: DVector<Float>) {
+    pub fn sgd(&mut self, inputs: DVector<Float>, targets: DVector<Float>, lr: Float) {
         use super::losses::MSE;
 
         // Do forward prop and save activations
@@ -56,11 +56,29 @@ impl Network {
             activations.push(layer.eval(activations.last().unwrap()));
         }
 
-        let output_errors = MSE.compute_loss(&activations.last().unwrap(), &targets);
+        let _output_err = MSE.compute_loss(&activations.last().unwrap(), &targets);
+        let mut grads_last = self.layers[self.layers.len() - 1]
+            .activation
+            .as_ref()
+            .unwrap()
+            .derive(&activations.last().unwrap());
 
-        for (i, layer) in self.layers.iter_mut().rev().enumerate() {
+        for (i, layer) in self.layers.iter_mut().rev().skip(1).enumerate() {
             let grads = layer.activation.as_ref().unwrap().derive(&activations[i]);
+            let s2 = grads.clone() * grads_last * lr;
+            layer.weights += s2;
+            grads_last = grads;
         }
+
+        // for (i, layer) in self.layers.iter_mut().rev().enumerate() {
+        //     let grads = layer.activation.as_ref().unwrap().derive(&activations[i]);
+        //     let s2 = grads * last_err * lr;
+        //     layer.weights += s2;
+        //     last_err = grads;
+        // }
+        //
+        //
+        //
         // for layer in self.layers.iter_mut().rev() {
         //     let grads = layer.activation.as_ref().unwrap().derive(&outputs);
         //     let s2 = grads * output_errors;
