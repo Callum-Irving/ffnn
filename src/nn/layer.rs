@@ -25,6 +25,8 @@ impl Layer {
     }
 
     /// Initialize weights using He Weight Initialization.
+    ///
+    /// TODO: Add multiple inititalization methods
     pub fn random_init(&mut self) {
         let mut rng = thread_rng();
         let norm = Normal::new(0.0, SQRT_2 / (self.weights.nrows() as Float).sqrt()).unwrap();

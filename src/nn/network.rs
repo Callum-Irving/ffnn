@@ -63,7 +63,7 @@ impl Network {
         println!("targets: {}", targets);
         println!("mse: {}", err);
 
-        panic!()
+        todo!()
         // let mut grads_last = self.layers[self.layers.len() - 1]
         //     .activation
         //     .derive(activations.last().unwrap());

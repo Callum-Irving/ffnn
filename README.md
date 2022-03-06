@@ -7,6 +7,25 @@
 
 Not useful yet, still a WIP.
 
+## Getting started
+
+Create a network using the NetBuilder struct:
+
+```rust
+use ffnn::NetBuilder;
+use ffnn::activations::RELU;
+
+let net = NetBuilder::new(3).layer(2, RELU).init();
+```
+
+Predict on a set of inputs using `Network::predict`:
+
+```rust
+use nalgbebra::dvector;
+
+net.predict(dvector![0.0, 0.0, 0.0]);
+```
+
 ## TODO
 
 - [ ] Add documentation
@@ -39,7 +58,9 @@ Not useful yet, still a WIP.
 
 ## References
 
-- [nalgebra docs](https://nalgebra.org/docs/user_guide/vectors_and_matrices)
-- [The Math behind Neural Networks - Backpropagation](https://www.jasonosajima.com/backprop)
+- [nalgebra docs](https://nalgebra.org/docs/user_guide/vectors_and_matrices/)
+- [The Math behind Neural Networks - Backpropagation](https://www.jasonosajima.com/backprop/)
 - [Why Initialize a Neural Network with Random Weights?](https://machinelearningmastery.com/why-initialize-a-neural-network-with-random-weights/)
 - [A Step by Step Backpropagation Example](https://mattmazur.com/2015/03/17/a-step-by-step-backpropagation-example/)
+- [How to Implement Backpropagation from Scratch in Python](https://machinelearningmastery.com/implement-backpropagation-algorithm-scratch-python/)
+- [Loss and Loss Functions](https://machinelearningmastery.com/loss-and-loss-functions-for-training-deep-learning-neural-networks/)
