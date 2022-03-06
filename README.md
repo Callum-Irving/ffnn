@@ -64,3 +64,4 @@ net.predict(dvector![0.0, 0.0, 0.0]);
 - [A Step by Step Backpropagation Example](https://mattmazur.com/2015/03/17/a-step-by-step-backpropagation-example/)
 - [How to Implement Backpropagation from Scratch in Python](https://machinelearningmastery.com/implement-backpropagation-algorithm-scratch-python/)
 - [Loss and Loss Functions](https://machinelearningmastery.com/loss-and-loss-functions-for-training-deep-learning-neural-networks/)
+- [Toy-Neural-Network-JS](https://github.com/CodingTrain/Toy-Neural-Network-JS)
