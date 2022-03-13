@@ -50,6 +50,8 @@ impl Network {
     pub fn sgd(&mut self, inputs: DVector<Float>, targets: DVector<Float>, _lr: Float) {
         use super::losses::MSE;
 
+        let deltas: Vec<DMatrix<Float>> = vec![];
+
         // Do forward prop and save activations
         let mut activations: Vec<DVector<Float>> = vec![inputs.clone()];
         for (i, layer) in self.layers.iter().enumerate() {
@@ -93,6 +95,11 @@ impl Network {
         //     layer.weights += fin;
         //     // outputs = dvector![];
         // }
+    }
+
+    /// Optimize parameters using the Adam optimization algorithm.
+    pub fn adam(&mut self, dataset: DMatrix<Float>) {
+        todo!();
     }
 
     /// Print a summary of all the weights in the neural network.
