@@ -50,8 +50,6 @@ impl Network {
     pub fn sgd(&mut self, inputs: DVector<Float>, targets: DVector<Float>, _lr: Float) {
         use super::losses::MSE;
 
-        let deltas: Vec<DMatrix<Float>> = vec![];
-
         // Do forward prop and save activations
         let mut activations: Vec<DVector<Float>> = vec![inputs.clone()];
         for (i, layer) in self.layers.iter().enumerate() {
@@ -59,6 +57,14 @@ impl Network {
         }
 
         let err = MSE.compute_loss(activations.last().unwrap(), &targets);
+
+        // Dimsensionality mismatch here
+        let d_L = err.transpose() * &activations[activations.len() - 2];
+
+        let l = activations.len() - 3;
+        // Next hidden deltas
+        let d_1 = d_L * &self.layers[l].weights * self.layers[l].activation.derive(&activations[l]);
+        let grads = d_L.transpose() * &activations[l];
 
         println!("inputs: {}", inputs);
         println!("outputs: {}", activations.last().unwrap());
