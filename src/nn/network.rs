@@ -1,7 +1,8 @@
 use super::layer::Layer;
 use super::Float;
 
-use nalgebra::{DMatrix, DVector};
+use ndarray::Array1;
+use ndarray::Array2;
 
 /// Basic feedforward neural network.
 ///
@@ -28,18 +29,32 @@ impl Network {
     }
 
     /// Do forward propagation.
-    pub fn predict(&self, inputs: DVector<Float>) -> DVector<Float> {
+    pub fn predict(&self, inputs: &Array1<Float>) -> Array1<Float> {
         assert_eq!(self.num_inputs, inputs.len());
 
-        let mut last = inputs;
+        let mut last = inputs.clone();
         for layer in self.layers.iter() {
             last = layer.eval(&last);
         }
         last
     }
 
+    /// Run forward propagation on multiple samples at once. Each row of inputs is a sample.
+    /// Outputs one row per sample.
+    fn predict_many(&self, inputs: &Array2<Float>) -> Array2<Float> {
+        assert_eq!(self.num_inputs, inputs.ncols());
+
+        // Transpose inputs
+        let mut last = inputs.clone().reversed_axes();
+        for layer in self.layers.iter() {
+            last = layer.eval_many(&last);
+            assert_eq!(last.ncols(), inputs.nrows());
+        }
+        last.reversed_axes()
+    }
+
     /// Do batched gradient descent by backprop.
-    pub fn train(&mut self, dataset: DMatrix<Float>) {
+    pub fn train(&mut self, dataset: Array2<Float>) {
         // Number of columns in dataset should match length of inputs
         assert_eq!(self.num_inputs, dataset.ncols());
 
@@ -47,31 +62,33 @@ impl Network {
     }
 
     /// Stochastic gradient descent.
-    pub fn sgd(&mut self, inputs: DVector<Float>, targets: DVector<Float>, _lr: Float) {
-        use super::losses::MSE;
-
-        // Do forward prop and save activations
-        let mut activations: Vec<DVector<Float>> = vec![inputs.clone()];
-        for (i, layer) in self.layers.iter().enumerate() {
-            activations.push(layer.eval(&activations[i]));
-        }
-
-        let err = MSE.compute_loss(activations.last().unwrap(), &targets);
-
-        // Dimsensionality mismatch here
-        let d_L = err.transpose() * &activations[activations.len() - 2];
-
-        let l = activations.len() - 3;
-        // Next hidden deltas
-        let d_1 = d_L * &self.layers[l].weights * self.layers[l].activation.derive(&activations[l]);
-        let grads = d_L.transpose() * &activations[l];
-
-        println!("inputs: {}", inputs);
-        println!("outputs: {}", activations.last().unwrap());
-        println!("targets: {}", targets);
-        println!("mse: {}", err);
-
+    pub fn sgd(&mut self, _inputs: Array1<Float>, _targets: Array1<Float>, _lr: Float) {
         todo!()
+        // use super::losses::MSE;
+
+        // // Do forward prop and save activations
+        // let mut activations: Vec<DVector<Float>> = vec![inputs.clone()];
+        // for (i, layer) in self.layers.iter().enumerate() {
+        //     activations.push(layer.eval(&activations[i]));
+        // }
+
+        // let err = MSE.compute_loss(activations.last().unwrap(), &targets);
+
+        // // Dimsensionality mismatch here
+        // let d_L = err.transpose() * &activations[activations.len() - 2];
+
+        // let l = activations.len() - 3;
+        // // Next hidden deltas
+        // let d_1 = d_L * &self.layers[l].weights * self.layers[l].activation.derive(&activations[l]);
+        // let grads = d_L.transpose() * &activations[l];
+
+        // println!("inputs: {}", inputs);
+        // println!("outputs: {}", activations.last().unwrap());
+        // println!("targets: {}", targets);
+        // println!("mse: {}", err);
+
+        // todo!()
+
         // let mut grads_last = self.layers[self.layers.len() - 1]
         //     .activation
         //     .derive(activations.last().unwrap());
@@ -104,7 +121,7 @@ impl Network {
     }
 
     /// Optimize parameters using the Adam optimization algorithm.
-    pub fn adam(&mut self, dataset: DMatrix<Float>) {
+    pub fn adam(&mut self, _dataset: Array2<Float>) {
         todo!();
     }
 
@@ -118,7 +135,7 @@ impl Network {
 
 #[cfg(test)]
 mod tests {
-    use nalgebra::dvector;
+    use ndarray::prelude::*;
 
     use crate::activations::SIGMOID;
 
@@ -127,17 +144,37 @@ mod tests {
 
     #[test]
     fn create() {
-        let net = NetBuilder::new(3).layer(2, RELU).layer(5, RELU).init();
+        NetBuilder::new(3).layer(2, RELU).layer(5, RELU).init();
+    }
 
-        net.predict(dvector![0.0, 0.0, 0.0]);
+    #[test]
+    fn predict() {
+        let net = NetBuilder::new(3).layer(2, RELU).layer(5, RELU).init();
+        let prediction = net.predict(&array![0.0, 0.0, 0.0]);
+        assert!(prediction.len() == 5, "Output has correct dimensions");
+    }
+
+    #[test]
+    fn predict_many() {
+        let net = NetBuilder::new(3).layer(2, RELU).layer(5, RELU).init();
+        let inputs = array![[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]];
+        let predictions = net.predict_many(&inputs);
+        assert!(
+            predictions.nrows() == 2,
+            "Output has correct number of rows"
+        );
+        assert!(
+            predictions.ncols() == 5,
+            "Output has correct number of colums"
+        );
     }
 
     #[test]
     fn train() {
         let mut net = NetBuilder::new(3).layer(2, RELU).layer(5, SIGMOID).init();
         net.sgd(
-            dvector![10.0, 50.0, -20.0],
-            dvector![1.2, 1.1, 1.4, 5.3, 8.6],
+            array![10.0, 50.0, -20.0],
+            array![1.2, 1.1, 1.4, 5.3, 8.6],
             0.1,
         );
     }

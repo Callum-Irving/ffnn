@@ -2,21 +2,17 @@
 
 use super::Float;
 
-use nalgebra::DVector;
+use ndarray::prelude::*;
 
 /// A struct that contains a loss function.
 pub struct Loss {
     /// The loss function.
-    compute: fn(&DVector<Float>, &DVector<Float>) -> DVector<Float>,
+    compute: fn(&Array1<Float>, &Array1<Float>) -> Array1<Float>,
 }
 
 impl Loss {
     /// Calls the loss function contained in `self`.
-    pub fn compute_loss(
-        &self,
-        outputs: &DVector<Float>,
-        targets: &DVector<Float>,
-    ) -> DVector<Float> {
+    pub fn compute_loss(&self, outputs: &Array1<Float>, targets: &Array1<Float>) -> Array1<Float> {
         (self.compute)(outputs, targets)
     }
 }
@@ -26,6 +22,6 @@ impl Loss {
 /// TODO: Describe it.
 pub const MSE: Loss = Loss { compute: mse_loss };
 
-fn mse_loss(outputs: &DVector<Float>, targets: &DVector<Float>) -> DVector<Float> {
-    (outputs - targets).map(|x| x * x) / 2.0
+fn mse_loss(outputs: &Array1<Float>, targets: &Array1<Float>) -> Array1<Float> {
+    (outputs - targets).mapv(|x| x * x) / 2.0
 }

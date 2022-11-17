@@ -5,7 +5,8 @@
 
 use super::Float;
 
-use nalgebra::DVector;
+use ndarray::Array1;
+use ndarray::ArrayViewMut1;
 
 // TODO: Make some sort of macro for defining activation functions
 
@@ -14,20 +15,20 @@ use nalgebra::DVector;
 /// Contains a function for forward pass and backward pass.
 pub struct Activation {
     /// The function used for forward propagation.
-    apply: fn(DVector<Float>) -> DVector<Float>,
+    apply: fn(ArrayViewMut1<Float>),
 
     /// The function used for backpropagation.
-    derive: fn(&DVector<Float>) -> DVector<Float>,
+    derive: fn(&Array1<Float>) -> Array1<Float>,
 }
 
 impl Activation {
     /// Apply activation function for forward propagation.
-    pub fn apply(&self, inputs: DVector<Float>) -> DVector<Float> {
-        (self.apply)(inputs)
+    pub fn apply(&self, inputs: ArrayViewMut1<Float>) {
+        (self.apply)(inputs);
     }
 
     /// Get gradients for set of inputs.
-    pub fn derive(&self, inputs: &DVector<Float>) -> DVector<Float> {
+    pub fn derive(&self, inputs: &Array1<Float>) -> Array1<Float> {
         (self.derive)(inputs)
     }
 }
@@ -36,16 +37,16 @@ impl Activation {
 ///
 /// TODO: describe function
 pub const SIGMOID: Activation = Activation {
-    apply: |z| z.map(sigmoid),
-    derive: |z| z.map(d_sigmoid),
+    apply: |mut z| z.iter_mut().for_each(|f| *f = sigmoid(*f)),
+    derive: |z| z.mapv(d_sigmoid),
 };
 
 /// The ReLU activation function.
 ///
 /// TODO: Describe relu
 pub const RELU: Activation = Activation {
-    apply: |z| z.map(relu),
-    derive: |z| z.map(d_relu),
+    apply: |mut z| z.iter_mut().for_each(|f| *f = relu(*f)),
+    derive: |z| z.mapv(d_relu),
 };
 
 /// The Softmax activation function.
