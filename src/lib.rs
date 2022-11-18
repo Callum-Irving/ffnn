@@ -9,13 +9,14 @@
 //! Make a neural network using the [NetBuilder] struct.
 //!
 //! ```
+//! use ffnn::NetBuilder;
+//! use ffnn::activations::RELU;
+//! use ndarray::prelude::*;
+//!
 //! let net = NetBuilder::new(3).layer(5, RELU).init();
-//! ```
 //!
-//! Making predictions on a set of inputs is as simple as:
-//!
-//! ```
-//! let result = net.predict(dvector![0.0, 0.0, 0.0]);
+//! // Making predictions is as simple as:
+//! let result = net.predict(&array![0., 0., 0.]);
 //! ```
 
 #![warn(missing_docs)]
