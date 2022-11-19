@@ -53,6 +53,46 @@ impl Network {
         last.reversed_axes()
     }
 
+    /// Train for one epoch
+    fn train_batch(&mut self, inputs: &Array2<Float>, targets: &Array2<Float>) {
+        // Do forward prop, saving activations
+        let mut sums = vec![];
+        let mut activations = vec![inputs.clone().reversed_axes()];
+
+        for layer in self.layers.iter() {
+            let (z, a) = layer.eval_many_with_sum(activations.last().unwrap());
+            sums.push(z);
+            activations.push(a);
+        }
+
+        // Compute deltas
+        let mut deltas = vec![];
+
+        // Compute output deltas
+        let output_deltas = targets - activations.last().unwrap();
+        let _error: Float = (&output_deltas * &output_deltas).iter().sum();
+        deltas.push(
+            output_deltas
+                * self
+                    .layers
+                    .last()
+                    .unwrap()
+                    .activation
+                    .derive_2d(sums.last().unwrap()),
+        );
+
+        // Compute deltas for hidden layers
+        for i in (0..self.layers.len() - 1).rev() {
+            let delta_pullback = self.layers[i + 1]
+                .weights
+                .view()
+                .reversed_axes()
+                .dot(deltas.last().unwrap());
+            let delta = delta_pullback * self.layers[i].activation.derive_2d(&sums[i]);
+            deltas.push(delta);
+        }
+    }
+
     /// Do batched gradient descent by backprop.
     pub fn train(&mut self, dataset: Array2<Float>) {
         // Number of columns in dataset should match length of inputs
@@ -171,11 +211,12 @@ mod tests {
 
     #[test]
     fn train() {
-        let mut net = NetBuilder::new(3).layer(2, RELU).layer(5, SIGMOID).init();
-        net.sgd(
-            array![10.0, 50.0, -20.0],
-            array![1.2, 1.1, 1.4, 5.3, 8.6],
-            0.1,
+        let mut net = NetBuilder::new(2).layer(2, RELU).layer(2, SIGMOID).init();
+        net.train_batch(
+            &array![[10.0, 50.0], [-20.0, 5.0]],
+            &array![[1.2, 1.1], [1.4, 5.3]],
         );
+
+        // TODO: Add gradient checking
     }
 }

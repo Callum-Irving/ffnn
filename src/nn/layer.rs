@@ -46,24 +46,36 @@ impl Layer {
         // Check dimensionality
         assert_eq!(self.weights.ncols(), inputs.len());
 
-        let mut out = self.weights.dot(inputs) + &self.biases;
+        // Compute weighted sum
+        let out = self.weights.dot(inputs) + &self.biases;
 
-        // Apply the activation function
-        let view = out.view_mut();
-        self.activation.apply(view);
+        // Apply activation
+        let out = self.activation.apply(out);
 
         out
     }
 
+    pub fn eval_with_sum(&self, inputs: &Array1<Float>) -> (Array1<Float>, Array1<Float>) {
+        let z = self.weights.dot(inputs) + &self.biases;
+        let a = self.activation.apply(z.clone());
+        (z, a)
+    }
+
     /// Compute outputs for multiple input vectors at once.
     pub fn eval_many(&self, inputs: &Array2<Float>) -> Array2<Float> {
-        let mut out = self.weights.dot(inputs) + self.biases.slice(s![.., NewAxis]);
+        let out = self.weights.dot(inputs) + self.biases.slice(s![.., NewAxis]);
 
-        // For each column, apply the activation function
-        out.axis_iter_mut(Axis(1))
-            .for_each(|row| self.activation.apply(row));
+        // Apply activation to each column
+        let out = self.activation.apply_2d(out);
 
         out
+    }
+
+    pub fn eval_many_with_sum(&self, inputs: &Array2<Float>) -> (Array2<Float>, Array2<Float>) {
+        let z = self.weights.dot(inputs) + self.biases.slice(s![.., NewAxis]);
+        let a = self.activation.apply_2d(z.clone());
+
+        (z, a)
     }
 
     /// The number of nodes in the layer.

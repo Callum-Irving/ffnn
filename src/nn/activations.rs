@@ -5,8 +5,7 @@
 
 use super::Float;
 
-use ndarray::Array1;
-use ndarray::ArrayViewMut1;
+use ndarray::prelude::*;
 
 // TODO: Make some sort of macro for defining activation functions
 
@@ -18,18 +17,48 @@ pub struct Activation {
     apply: fn(ArrayViewMut1<Float>),
 
     /// The function used for backpropagation.
-    derive: fn(&Array1<Float>) -> Array1<Float>,
+    derive: fn(ArrayViewMut1<Float>),
 }
 
 impl Activation {
-    /// Apply activation function for forward propagation.
-    pub fn apply(&self, inputs: ArrayViewMut1<Float>) {
+    fn apply_mut(&self, inputs: ArrayViewMut1<Float>) {
         (self.apply)(inputs);
+    }
+
+    /// Apply activation function for forward propagation.
+    pub fn apply(&self, mut inputs: Array1<Float>) -> Array1<Float> {
+        let view = inputs.view_mut();
+        self.apply_mut(view);
+        inputs
+    }
+
+    pub fn apply_2d(&self, mut inputs: Array2<Float>) -> Array2<Float> {
+        // Apply to each column
+        inputs
+            .axis_iter_mut(Axis(1))
+            .for_each(|col| self.apply_mut(col));
+
+        inputs
+    }
+
+    fn derive_mut(&self, inputs: ArrayViewMut1<Float>) {
+        (self.derive)(inputs)
     }
 
     /// Get gradients for set of inputs.
     pub fn derive(&self, inputs: &Array1<Float>) -> Array1<Float> {
-        (self.derive)(inputs)
+        let mut res = inputs.clone();
+        let view = res.view_mut();
+        self.derive_mut(view);
+        res
+    }
+
+    pub fn derive_2d(&self, inputs: &Array2<Float>) -> Array2<Float> {
+        let mut res = inputs.clone();
+        res.axis_iter_mut(Axis(1))
+            .for_each(|col| self.derive_mut(col));
+
+        res
     }
 }
 
@@ -38,7 +67,7 @@ impl Activation {
 /// TODO: describe function
 pub const SIGMOID: Activation = Activation {
     apply: |mut z| z.iter_mut().for_each(|f| *f = sigmoid(*f)),
-    derive: |z| z.mapv(d_sigmoid),
+    derive: |mut z| z.iter_mut().for_each(|f| *f = d_sigmoid(*f)),
 };
 
 /// The ReLU activation function.
@@ -46,7 +75,7 @@ pub const SIGMOID: Activation = Activation {
 /// TODO: Describe relu
 pub const RELU: Activation = Activation {
     apply: |mut z| z.iter_mut().for_each(|f| *f = relu(*f)),
-    derive: |z| z.mapv(d_relu),
+    derive: |mut z| z.iter_mut().for_each(|f| *f = d_relu(*f)),
 };
 
 /// The Softmax activation function.
