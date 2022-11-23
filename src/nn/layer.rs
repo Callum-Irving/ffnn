@@ -83,3 +83,26 @@ impl Layer {
         self.weights.nrows()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::super::activations::*;
+    use super::*;
+
+    const EPSILON: Float = 0.000001;
+
+    #[test]
+    fn test_eval_1d() {
+        let layer = Layer::new(2, 1, SIGMOID);
+        assert!((&layer.eval(&array![111.0]) - &array![0.5, 0.5]).sum() < 2.0 * EPSILON);
+    }
+
+    #[test]
+    fn test_eval_2d() {
+        let layer = Layer::new(2, 1, SIGMOID);
+        let inputs = array![[1.0, 1.0]];
+        let (z, a) = layer.eval_many_with_sum(&inputs);
+        assert!((&z - &array![[0.0, 0.0]]).sum() < 2.0 * EPSILON);
+        assert!((&a - &array![[0.5, 0.5]]).sum() < 2.0 * EPSILON);
+    }
+}

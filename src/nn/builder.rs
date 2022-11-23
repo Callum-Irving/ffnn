@@ -1,6 +1,7 @@
 use super::activations::Activation;
 use super::layer::Layer;
 use super::Network;
+use crate::optimizers::Adam;
 
 /// A struct for using the builder pattern to define a network.
 ///
@@ -32,7 +33,8 @@ impl NetBuilder {
 
     /// Randomly initialize the network.
     pub fn init(self) -> Network {
-        let mut net = Network::new(self.num_inputs, self.layers);
+        let opt = Adam::new(&self.layers);
+        let mut net = Network::new(self.num_inputs, self.layers, opt);
         net.init();
         net
     }

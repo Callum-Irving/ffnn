@@ -21,6 +21,8 @@
 
 #![warn(missing_docs)]
 
+extern crate blas_src;
+
 mod nn;
 
 pub use nn::activations;

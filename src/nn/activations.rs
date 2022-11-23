@@ -78,6 +78,12 @@ pub const RELU: Activation = Activation {
     derive: |mut z| z.iter_mut().for_each(|f| *f = d_relu(*f)),
 };
 
+/// Linear activation function
+pub const LINEAR: Activation = Activation {
+    apply: |_z| (),
+    derive: |mut z| z.iter_mut().for_each(|f| *f = 1.0),
+};
+
 /// The Softmax activation function.
 ///
 /// TODO: Add description of softmax.
@@ -133,5 +139,15 @@ mod tests {
         assert!((d_relu(2.0) - 1.0).abs() < EPSILON);
         assert!((d_relu(0.0)).abs() < EPSILON);
         assert!((d_relu(-1.0)).abs() < EPSILON);
+    }
+
+    #[test]
+    fn sigmoid_apply_2d() {
+        assert!(
+            (&SIGMOID.apply_2d(array![[0.0, 2.0], [-2.0, 0.0]])
+                - &array![[0.5, 0.880797], [0.119202, 0.5]])
+                .sum()
+                < 4.0 * EPSILON
+        );
     }
 }
