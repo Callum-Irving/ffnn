@@ -1,6 +1,6 @@
 # ffnn - a very simple feedforward neural network library
 
-![CI](https://img.shields.io/github/workflow/status/Callum-Irving/ffnn/Continuous%20integration)
+![CI2](https://img.shields.io/github/actions/workflow/status/Callum-Irving/ffnn/ci.yml?branch=main)
 [![Crate](https://img.shields.io/crates/v/ffnn)](https://crates.io/crates/ffnn)
 [![Docs](https://img.shields.io/docsrs/ffnn)](https://docs.rs/ffnn)
 ![License](https://img.shields.io/github/license/Callum-Irving/ffnn)
